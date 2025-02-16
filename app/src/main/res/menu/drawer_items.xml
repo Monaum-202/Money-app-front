@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group1">
+
+        <item
+
+            android:id="@+id/navHome"
+            android:icon="@drawable/home2"
+            android:title="Home" />
+    </group>
+
+    <group
+        android:id="@+id/group2">
+        <item
+            android:id="@+id/navWalletStatus"
+            android:icon="@drawable/wallet"
+            android:title="WalletStatus" />
+        <item
+            android:id="@+id/navIncomeStatus"
+            android:icon="@drawable/increase"
+            android:title="IncomeStatus" />
+        <item
+            android:id="@+id/navExpenseStatus"
+            android:icon="@drawable/dicrease"
+            android:title="ExpenseStatus" />
+    </group>
+    <group android:id="@+id/group3">
+        <item
+            android:id="@+id/navBudget"
+            android:icon="@drawable/budget"
+            android:title="Budget" />
+
+        <item
+            android:id="@+id/navPlan"
+            android:icon="@drawable/dream"
+            android:title="Plan" />
+
+    </group>
+
+    <group
+        android:id="@+id/group4">
+        <item
+            android:id="@+id/navHistory"
+            android:icon="@drawable/history"
+            android:title="History" />
+
+    </group>
+
+
+</menu>

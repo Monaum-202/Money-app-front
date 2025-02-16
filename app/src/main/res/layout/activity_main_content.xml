@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- Toolbar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#252B36"
+        android:padding="15dp"
+        android:elevation="4dp">
+
+        <ImageButton
+            android:id="@+id/buttonDrawerToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:padding="5dp"
+            android:src="@drawable/drawermenu"
+            android:contentDescription="Drawer Menu"/>
+
+    </LinearLayout>
+
+    <!-- Action Buttons Layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:elevation="20dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="4dp">
+
+        <ImageButton
+            android:id="@+id/btn_add"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:backgroundTint="#00FF00"
+            android:contentDescription="Add"
+            android:padding="8dp"
+            android:src="@drawable/add" />
+
+        <ImageButton
+            android:id="@+id/btn_remove"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:contentDescription="Remove"
+            android:padding="8dp"
+            android:src="@drawable/remove" />
+
+        <ImageButton
+            android:id="@+id/btn_transfer"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:backgroundTint="#0C82FD"
+            android:contentDescription="Transfer"
+            android:padding="8dp"
+            android:src="@drawable/transfer" />
+
+        <ImageButton
+            android:id="@+id/btn_loan"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:contentDescription="Loan"
+            android:padding="8dp"
+            android:src="@drawable/loan" />
+
+        <ImageButton
+            android:id="@+id/btn_refresh"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:contentDescription="Refresh"
+            android:padding="8dp"
+            android:src="@drawable/refresh" />
+    </LinearLayout>
+
+</LinearLayout>
