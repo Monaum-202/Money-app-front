@@ -23,7 +23,7 @@
         tools:visibility="visible" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -40,7 +40,7 @@
         tools:visibility="visible" />
 
     <EditText
-        android:id="@+id/editTextTextPassword"
+        android:id="@+id/password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"

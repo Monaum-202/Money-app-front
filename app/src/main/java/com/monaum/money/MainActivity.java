@@ -1,5 +1,6 @@
 package com.monaum.money;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
         btnRefresh = findViewById(R.id.btn_refresh);
 
 
-
-
         // Open drawer on button click
         buttonDrawerToggle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,13 +74,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Show Add Income Dialog on Button Click
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager fm = getSupportFragmentManager();
-                AddIncomeDialogFragment dialog = new AddIncomeDialogFragment();
-                dialog.show(fm, "add_income_dialog");
+                Intent intent = new Intent(MainActivity.this,AddIncome.class);
+                startActivity(intent);
             }
         });
 

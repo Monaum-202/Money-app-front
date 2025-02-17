@@ -155,7 +155,7 @@
                     android:layout_weight="1"
                     android:focusable="false"
                     android:hint="Date"
-                    android:inputType="none"
+                    android:inputType="date"
                     android:textColorHint="#1F1F1F" />
 
                 <ImageButton

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,24 +13,54 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.monaum.money.dbUtill.Database;
+
 public class Login extends AppCompatActivity {
-    Button btnLogin;
+
+
+    private EditText email,password;
+    private Button signup, btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+email = findViewById(R.id.email);
+password =findViewById(R.id.password);
 
         btnLogin = findViewById(R.id.login);
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Intent intent = new Intent(Login.this,MainActivity.class);
-                startActivity(intent);
+        btnLogin.setOnClickListener(v -> {
+
+            String mail = email.getText().toString();
+            String pass = password.getText().toString();
+
+
+
+            // Validate fields
+            if ( mail.isEmpty() || pass.isEmpty()) {
+                Toast.makeText(Login.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            try {
+                Database db = new Database(getApplicationContext(),"myDB",null,1);
+               int val = db.loginUser(mail,pass);
+
+               if(val<1){
+                   Toast.makeText(Login.this, "Invalid Email or Password", Toast.LENGTH_SHORT).show();
+                   return;
+               }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+
+            // Example: After sign up is successful, move to login screen or home screen
+            Toast.makeText(Login.this, "Log in successful!", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Login.this, Login.class));  // Assume HomeActivity is your landing page
         });
     }
 }
