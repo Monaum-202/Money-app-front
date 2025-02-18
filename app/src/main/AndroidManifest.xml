@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Monaum"
         tools:targetApi="31">
         <activity
+            android:name=".ShowList"
+            android:exported="false" />
+        <activity
             android:name=".AddExpence"
             android:exported="false" />
         <activity

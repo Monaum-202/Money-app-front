@@ -20,7 +20,7 @@ public class Login extends AppCompatActivity {
 
 
     private EditText email, password;
-    private Button signup, btnLogin;
+    private Button btnLogin;
     private TextView tvRegister;
 
     @Override
@@ -49,7 +49,7 @@ public class Login extends AppCompatActivity {
             }
 
             try {
-                Database db = new Database(getApplicationContext(), "myDB", null, 1);
+                Database db = new Database(getApplicationContext());
                 int val = db.loginUser(mail, pass);
 
                 if (val < 1) {

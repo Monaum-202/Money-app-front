@@ -15,6 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.monaum.money.dbUtill.Database;
+import com.monaum.money.entity.Users;
 
 import java.util.Calendar;
 
@@ -73,8 +74,11 @@ public class Signup extends AppCompatActivity {
             }
 
             try {
-                Database db = new Database(getApplicationContext(),"myDB",null,1);
-                db.addUser(name,mail,pass,cpass,dateofbirth);
+
+                Database db = new Database(getApplicationContext());
+                Users users =  new Users(name,mail,pass,cpass,dateofbirth);
+                db.insertUser(users);
+                
             }catch (Exception e){
                 e.printStackTrace();
             }
