@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -24,6 +25,8 @@ public class AddIncome extends AppCompatActivity {
     private Button btnDate, btnTime, btnSave;
     private int selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute;
 
+    private ImageButton btnBack;
+
     private List<String> categoryList, paymentMethodList;
 
     @Override
@@ -38,6 +41,7 @@ public class AddIncome extends AppCompatActivity {
         btnDate = findViewById(R.id.btn_date);
         btnTime = findViewById(R.id.btn_time);
         btnSave = findViewById(R.id.btn_save);
+        btnBack = findViewById(R.id.back);
 
         // Get current date and time
         Calendar calendar = Calendar.getInstance();
@@ -46,6 +50,7 @@ public class AddIncome extends AppCompatActivity {
         selectedDay = calendar.get(Calendar.DAY_OF_MONTH);
         selectedHour = calendar.get(Calendar.HOUR_OF_DAY);
         selectedMinute = calendar.get(Calendar.MINUTE);
+
 
         // Populate Category List
         categoryList = new ArrayList<>();
@@ -62,6 +67,8 @@ public class AddIncome extends AppCompatActivity {
         paymentMethodList.add("Credit Card");
         paymentMethodList.add("PayPal");
         paymentMethodList.add("Other");
+
+
 
         // Create Adapter for Category Spinner
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
@@ -132,7 +139,17 @@ public class AddIncome extends AppCompatActivity {
 
         // Save button action
         btnSave.setOnClickListener(view -> saveIncome());
+
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // Closes the current activity and goes back to the previous one
+            }
+        });
     }
+
+
 
     private void saveIncome() {
         String incomeAmount = etIncomeAmount.getText().toString().trim();

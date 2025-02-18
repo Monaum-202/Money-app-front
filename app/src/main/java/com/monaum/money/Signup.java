@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -20,7 +21,9 @@ import java.util.Calendar;
 public class Signup extends AppCompatActivity {
 
     private EditText username, email,password,confirmPassword,DOB;
-    private Button signup, login;
+    private Button signup;
+
+    TextView login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

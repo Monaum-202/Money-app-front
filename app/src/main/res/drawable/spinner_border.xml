@@ -3,10 +3,11 @@
     android:shape="rectangle">
 
     <!-- Border color and width -->
-    <stroke android:width="2dp" android:color="#808080"/> <!-- Gray border -->
+    <stroke android:width="2dp" android:color="#000000"/> <!-- Gray border -->
 
     <!-- Background color -->
-    <solid android:color="#FFFFFF"/> <!-- White background -->
+    <solid android:color="#DEDEDE"/> <!-- White background -->
+
 
     <!-- Rounded corners -->
     <corners android:radius="8dp"/>

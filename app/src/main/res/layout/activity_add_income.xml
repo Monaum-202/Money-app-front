@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    android:layout_marginTop="90dp"
+    android:layout_marginTop="0dp"
     android:layout_marginBottom="30dp"
     android:textColor="@color/black"
     android:background="#FFFFFF"
@@ -13,15 +13,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <ImageButton
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_back"
+            android:backgroundTint="@color/white"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Income"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:padding="5dp"/>
         <!-- Income Amount -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Income"
+            android:text="Amount"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:textColor="@color/black"/>
+            android:paddingTop="10dp"
+            android:textColor="@color/black" />
 
         <EditText
             android:id="@+id/et_income_amount"
@@ -30,7 +45,8 @@
             android:hint="Enter Income"
             android:inputType="numberDecimal"
             android:background="@drawable/spinner_border"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:textColor="@color/black"/>
 
         <!-- Category -->
         <TextView
@@ -40,15 +56,15 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:paddingTop="10dp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black" />
 
         <Spinner
             android:id="@+id/spinner_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/spinner_border"
-            android:padding="8dp"/>
-
+            android:padding="8dp"
+            android:textColor="@color/black"/>
 
         <!-- Payment Method -->
         <TextView
@@ -58,14 +74,15 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:paddingTop="10dp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black" />
 
         <Spinner
             android:id="@+id/spinner_payment_method"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/spinner_border"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:textColor="@color/black"/>
 
         <!-- Notes -->
         <TextView
@@ -74,7 +91,8 @@
             android:text="Notes"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:paddingTop="10dp" />
+            android:paddingTop="10dp"
+            android:textColor="@color/black"/>
 
         <EditText
             android:id="@+id/et_notes"
@@ -83,14 +101,14 @@
             android:hint="Optional"
             android:background="@drawable/spinner_border"
             android:padding="8dp"
-            />
+            android:textColor="@color/black"/>
 
         <!-- Date and Time -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="10dp">
+            android:paddingTop="14dp">
 
             <Button
                 android:id="@+id/btn_date"
@@ -99,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:text="Select Date"
                 android:backgroundTint="@color/white"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black" />
 
             <Button
                 android:id="@+id/btn_time"
@@ -108,9 +126,10 @@
                 android:layout_height="wrap_content"
                 android:text="Select Time"
                 android:backgroundTint="@color/white"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black" />
         </LinearLayout>
 
+        <!-- Save Button -->
         <Button
             android:id="@+id/btn_save"
             android:layout_width="match_parent"
