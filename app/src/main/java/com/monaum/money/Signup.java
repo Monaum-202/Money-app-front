@@ -42,6 +42,15 @@ public class Signup extends AppCompatActivity {
         login = findViewById(R.id.login);
 
 
+        Intent intent = getIntent();
+
+if (intent.hasExtra("USER_ID")) {
+            username.setText(intent.getStringExtra("USER_NAME"));
+            email.setText(intent.getStringExtra("USER_EMAIL"));
+            DOB.setText(intent.getStringExtra("USER_DOB"));
+        }
+
+
         DOB.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -77,8 +86,16 @@ public class Signup extends AppCompatActivity {
 
                 Database db = new Database(getApplicationContext());
                 Users users =  new Users(name,mail,pass,cpass,dateofbirth);
-                db.insertUser(users);
-                
+
+
+                if (intent.hasExtra("USER_ID")) {
+                    int userId = intent.getIntExtra("USER_ID", -1);
+                    users.id = userId;
+                    db.updateUser(users);  // Assuming you have an update method in the Database class
+                } else {
+                    db.insertUser(users);
+                }
+
             }catch (Exception e){
                 e.printStackTrace();
             }

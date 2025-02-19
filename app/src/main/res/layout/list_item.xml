@@ -2,74 +2,78 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginStart="12dp"
-    android:layout_marginEnd="12dp"
-    android:layout_marginVertical="10dp"
-    android:layout_marginHorizontal="10dp"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="8dp"
-    app:cardBackgroundColor="@color/white"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="@color/white">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:gravity="center">
 
+        <!-- Name -->
+
+        <!-- Email -->
         <TextView
-            android:layout_width="120dp"
-            android:layout_height="30dp"
             android:id="@+id/listName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:text="Name"
             android:textColor="@color/black"
-            android:textSize="20sp"
-            android:layout_marginTop="25dp"
-            android:layout_marginStart="5dp"
-            />
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
         <TextView
-            android:layout_width="80dp"
-            android:layout_height="30dp"
             android:id="@+id/listEmail"
-            android:text="Email"
-            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_toEndOf="@id/listName"
-            android:layout_marginTop="25dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="16dp"
+            android:text="Email"
+            android:textSize="12sp"
             android:textColor="@color/black"/>
 
+        <!-- Date of Birth / Time -->
         <TextView
-            android:layout_width="80dp"
-            android:layout_height="30dp"
             android:id="@+id/listDob"
-            android:text="time"
-            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_toEndOf="@id/listEmail"
-            android:layout_marginTop="25dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="16dp"
+            android:text="Time"
+            android:textSize="12sp"
             android:textColor="@color/black"/>
 
+        <!-- Delete Button -->
         <TextView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
             android:id="@+id/listDelete"
-            android:textSize="16sp"
-            android:drawableLeft="@drawable/baseline_delete_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_toEndOf="@id/listDob"
-            android:layout_marginTop="25dp"
-            android:layout_marginStart="5dp"
-            android:textColor="@color/black"/>
-        <TextView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/listUpdate"
-            android:textSize="16sp"
-            android:drawableLeft="@drawable/baseline_edit_24"
-            android:layout_toEndOf="@id/listDelete"
-            android:layout_marginTop="25dp"
-            android:layout_marginStart="5dp"
-            android:textColor="@color/black"/>
+            android:layout_marginStart="16dp"
+            android:drawableStart="@drawable/baseline_delete_24"
+            android:drawablePadding="8dp"
+            android:text="Delete"
+            android:textSize="12sp"
+            android:textColor="#FF0000"/>
 
+        <!-- Edit Button -->
+        <TextView
+            android:id="@+id/listUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/listDelete"
+            android:layout_marginStart="16dp"
+            android:drawableStart="@drawable/baseline_edit_24"
+            android:drawablePadding="8dp"
+            android:text="Edit"
+            android:textSize="12sp"
+            android:textColor="@color/black"/>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

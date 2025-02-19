@@ -83,40 +83,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        btnExpense.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fm = getSupportFragmentManager();
-                ExpenceDialogFragment dialog2 = new ExpenceDialogFragment();
-                dialog2.show(fm, "expense_dialog");
-            }
-        });
-
-
-        btnTransfer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fm = getSupportFragmentManager();
-                TransferDialogFragment dialog3 = new TransferDialogFragment();
-                dialog3.show(fm, "transfer_dialog");
-            }
-        });
-
-
-        btnLoan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fm = getSupportFragmentManager();
-                LoanDialogFragment dialog4 = new LoanDialogFragment();
-                dialog4.show(fm, "loan_dialog");
-            }
-        });
-
-
-
-        // Initialize the Refresh button
-
-
         // Set click listener for the refresh button
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override

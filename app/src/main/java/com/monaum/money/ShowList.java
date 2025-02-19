@@ -22,7 +22,7 @@ public class ShowList extends AppCompatActivity {
     ActivityShowListBinding binding;
 
     ArrayList<Users> dataArrayList = new ArrayList<>();
-    UserAdapter listAdapter;
+    UserAdapter listAdapter ;
     Users listData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,21 +38,21 @@ public class ShowList extends AppCompatActivity {
 
         listAdapter = new UserAdapter(ShowList.this, dataArrayList);
         binding.listview.setAdapter(listAdapter);
-        binding.listview.setClickable(true);
-        binding.listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                Toast.makeText(ShowList.this, dataArrayList.get(i).toString(), Toast.LENGTH_LONG).show();
-
-//                Intent intent = new Intent(MainActivity.this, Detailed.class);
-//                intent.putExtra("name", nameList[i]);
-//                intent.putExtra("time", timeList[i]);
-//                intent.putExtra("ingredients", ingredientList[i]);
-//                intent.putExtra("desc", descList[i]);
-//                intent.putExtra("image", imageList[i]);
-//                startActivity(intent);
-            }
-        });
+//        binding.listview.setClickable(true);
+//        binding.listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//
+//                Toast.makeText(ShowList.this, dataArrayList.get(i).toString(), Toast.LENGTH_LONG).show();
+//
+////                Intent intent = new Intent(MainActivity.this, Detailed.class);
+////                intent.putExtra("name", nameList[i]);
+////                intent.putExtra("time", timeList[i]);
+////                intent.putExtra("ingredients", ingredientList[i]);
+////                intent.putExtra("desc", descList[i]);
+////                intent.putExtra("image", imageList[i]);
+////                startActivity(intent);
+//            }
+//        });
     }
 }

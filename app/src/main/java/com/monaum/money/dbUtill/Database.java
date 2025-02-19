@@ -50,7 +50,7 @@ public class Database extends SQLiteOpenHelper {
     // Get a user by username
     public Users getUserByUserID(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("USERS", null, "id" + " = ?", new String[]{String.valueOf(id)},
+        Cursor cursor = db.query("USERS", null, "id = ?", new String[]{String.valueOf(id)},
                 null, null, null);
 
         if (cursor != null) {
@@ -75,23 +75,24 @@ public class Database extends SQLiteOpenHelper {
     public ArrayList<Users> getAllUsers() {
         ArrayList<Users> userList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("USERS", null, null, null, null, null, null);
+//        Cursor cursor = db.query("USERS", null, null, null, null, null, null);
+        @SuppressLint("Recycle") Cursor cursor = db.rawQuery("select * from USERS ", null);
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                @SuppressLint("Range")
                 Users user = new Users(
-                        cursor.getInt(cursor.getColumnIndex("id")),
-                        cursor.getString(cursor.getColumnIndex("name")),
-                        cursor.getString(cursor.getColumnIndex("email")),
-                        cursor.getString(cursor.getColumnIndex("PASS")),
-
-                        cursor.getString(cursor.getColumnIndex("DOB"))
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5)
                 );
                 userList.add(user);
             }
             cursor.close();
         }
+
         return userList;
     }
 
@@ -99,7 +100,7 @@ public class Database extends SQLiteOpenHelper {
     public int updateUser(Users user) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("name", user.email);
+        values.put("name", user.username);
         values.put("email", user.email);
         values.put("pass", user.password);
         values.put("dob", user.dob);
