@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
+import com.monaum.money.entity.AddIncome1;
 import com.monaum.money.entity.Users;
 
 import java.util.ArrayList;
@@ -31,7 +32,21 @@ public class Database extends SQLiteOpenHelper {
 
         String userQuery = " create table users( id integer PRIMARY KEY AUTOINCREMENT," +
                 " name text, email text, pass text,cpass text, dob text)";
+
+
+        String incomeQuery = "CREATE TABLE income ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "amount REAL NOT NULL, " +
+                "category TEXT NOT NULL, " +
+                "wallet TEXT NOT NULL, " +
+                "notes TEXT, " +
+                "date TEXT NOT NULL, " +
+                "time TEXT NOT NULL )";
+
+
+
         db.execSQL(userQuery);
+        db.execSQL(incomeQuery);
     }
 
     public long insertUser(Users user) {
@@ -125,6 +140,91 @@ public class Database extends SQLiteOpenHelper {
         }
         return 0;
     }
+
+
+    // Create - Insert Income
+    public long insertIncome(AddIncome1 income) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("amount", income.getAmount());
+        values.put("category", income.getCategory());
+        values.put("wallet", income.getWallet());
+        values.put("notes", income.getNotes());
+        values.put("date", income.getDate());
+        values.put("time", income.getTime());
+
+        return db.insert("income", null, values);
+    }
+
+    // Read - Get Income by ID
+    public AddIncome1 getIncomeById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("income", null, "id = ?", new String[]{String.valueOf(id)},
+                null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            AddIncome1 income = new AddIncome1(
+                    cursor.getLong(0),
+                    cursor.getDouble(1),
+                    cursor.getString(2),
+                    cursor.getString(3),
+                    cursor.getString(4),
+                    cursor.getString(5),
+                    cursor.getString(6)
+            );
+            cursor.close();
+            return income;
+        }
+        return null; // Return null if no income found
+    }
+
+    // Read - Get All Income Records
+    public List<AddIncome1> getAllIncome() {
+        List<AddIncome1> incomeList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM income", null);
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                AddIncome1 income = new AddIncome1(
+                        cursor.getLong(0),
+                        cursor.getDouble(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6)
+                );
+                incomeList.add(income);
+            }
+            cursor.close();
+        }
+        return incomeList;
+    }
+
+    // Update - Update Income
+    public int updateIncome(AddIncome1 income) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("amount", income.getAmount());
+        values.put("category", income.getCategory());
+        values.put("wallet", income.getWallet());
+        values.put("notes", income.getNotes());
+        values.put("date", income.getDate());
+        values.put("time", income.getTime());
+
+        return db.update("income", values, "id = ?", new String[]{String.valueOf(income.getId())});
+    }
+
+    // Delete - Delete Income
+    public void deleteIncome(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("income", "id = ?", new String[]{String.valueOf(id)});
+    }
+
+
 
 
     @Override

@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.monaum.money.dbUtill.Database;
+import com.monaum.money.entity.AddIncome1;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -26,6 +29,8 @@ public class AddIncome extends AppCompatActivity {
     private int selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute;
 
     private ImageButton btnBack;
+
+    private boolean isEditMode = false;
 
     private List<String> categoryList, paymentMethodList;
 
@@ -149,23 +154,49 @@ public class AddIncome extends AppCompatActivity {
         });
     }
 
-
+Database incomeDatabase = new Database(this);
 
     private void saveIncome() {
-        String incomeAmount = etIncomeAmount.getText().toString().trim();
-        String notes = etNotes.getText().toString().trim();
-        String category = spinnerCategory.getSelectedItem().toString();
-        String paymentMethod = spinnerPaymentMethod.getSelectedItem().toString();
-        String date = btnDate.getText().toString();
-        String time = btnTime.getText().toString();
+        // Get income amount
+        String amountStr = etIncomeAmount.getText().toString().trim();
+        double amount = Double.parseDouble(amountStr); // Ensure to handle NumberFormatException as needed
 
-        if (incomeAmount.isEmpty()) {
-            Toast.makeText(this, "Please enter income amount", Toast.LENGTH_SHORT).show();
-            return;
+        // Get selected category
+        String category = spinnerCategory.getSelectedItem().toString();
+
+        // Get selected wallet (payment method)
+        String wallet = spinnerPaymentMethod.getSelectedItem().toString();
+
+        // Get notes
+        String notes = etNotes.getText().toString().trim();
+
+        // Get selected date and time
+        String date = btnDate.getText().toString(); // Assuming the button text is set to the selected date
+        String time = btnTime.getText().toString(); // Assuming the button text is set to the selected time
+
+        if (isEditMode) {
+            // Update existing income record
+//            currentIncome.setAmount(amount);
+//            currentIncome.setCategory(category);
+//            currentIncome.setWallet(wallet);
+//            currentIncome.setNotes(notes);
+//            currentIncome.setDate(date);
+//            currentIncome.setTime(time);
+//
+//            // Update the income in the database
+//            incomeDatabase.updateIncome(currentIncome);
+            Toast.makeText(this, "Income Updated!", Toast.LENGTH_SHORT).show();
+        } else {
+            // Create new income record
+            AddIncome1 newIncome = new AddIncome1(amount, category, wallet, notes, date, time);
+            incomeDatabase.insertIncome(newIncome);
+            Toast.makeText(this, "Income Added!", Toast.LENGTH_SHORT).show();
         }
 
-        // Here you can save the data to a database or API
-        Toast.makeText(this, "Income Saved Successfully!", Toast.LENGTH_SHORT).show();
+        // Finish activity
         finish();
     }
+
+
+
 }
