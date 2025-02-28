@@ -82,6 +82,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btnExpense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,AddExpence.class);
+                startActivity(intent);
+            }
+        });
+
 
         // Set click listener for the refresh button
         btnRefresh.setOnClickListener(new View.OnClickListener() {

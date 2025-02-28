@@ -18,13 +18,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.monaum.money.dbUtill.Database;
+import com.monaum.money.entity.AddExpence1;
+import com.monaum.money.entity.AddIncome1;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 public class AddExpence extends AppCompatActivity {
 
-    private EditText etIncomeAmount, etNotes;
+    private EditText etExpenceAmount, etNotes;
     private Spinner spinnerCategory, spinnerPaymentMethod;
     private Button btnDate, btnTime, btnSave;
     private int selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute;
@@ -33,12 +37,14 @@ public class AddExpence extends AppCompatActivity {
 
     private List<String> categoryList, paymentMethodList;
 
+    private boolean isEditMode = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expence);
 
-        etIncomeAmount = findViewById(R.id.et_income_amount);
+        etExpenceAmount = findViewById(R.id.et_expence_amount);
         etNotes = findViewById(R.id.et_notes);
         spinnerCategory = findViewById(R.id.spinner_category);
         spinnerPaymentMethod = findViewById(R.id.spinner_payment_method);
@@ -58,11 +64,23 @@ public class AddExpence extends AppCompatActivity {
 
         // Populate Category List
         categoryList = new ArrayList<>();
-        categoryList.add("Salary");
-        categoryList.add("Allowance");
-        categoryList.add("Freelance");
-        categoryList.add("Investment");
+        categoryList.add("Rent");
+        categoryList.add("Groceries");
+        categoryList.add("Utilities");
+        categoryList.add("Transportation");
+        categoryList.add("Healthcare");
+        categoryList.add("Entertainment");
+        categoryList.add("Dining Out");
+        categoryList.add("Shopping");
+        categoryList.add("Insurance");
+        categoryList.add("Education");
+        categoryList.add("Debt Payments");
+        categoryList.add("Travel");
+        categoryList.add("Personal Care");
+        categoryList.add("Subscriptions");
+        categoryList.add("Charity");
         categoryList.add("Other");
+
 
         // Populate Payment Method List
         paymentMethodList = new ArrayList<>();
@@ -87,7 +105,6 @@ public class AddExpence extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedCategory = parent.getItemAtPosition(position).toString();
-                Toast.makeText(AddExpence.this, "Selected Category: " + selectedCategory, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -109,7 +126,6 @@ public class AddExpence extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedPaymentMethod = parent.getItemAtPosition(position).toString();
-                Toast.makeText(AddExpence.this, "Selected Payment Method: " + selectedPaymentMethod, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -142,7 +158,7 @@ public class AddExpence extends AppCompatActivity {
         });
 
         // Save button action
-        btnSave.setOnClickListener(view -> saveIncome());
+        btnSave.setOnClickListener(view -> saveExpence());
 
 
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -154,22 +170,46 @@ public class AddExpence extends AppCompatActivity {
     }
 
 
+    Database expenceDatabase = new Database(this);
 
-    private void saveIncome() {
-        String incomeAmount = etIncomeAmount.getText().toString().trim();
-        String notes = etNotes.getText().toString().trim();
+    private void saveExpence() {
+        // Get income amount
+        String amountStr = etExpenceAmount.getText().toString().trim();
+        double amount = Double.parseDouble(amountStr); // Ensure to handle NumberFormatException as needed
+
+        // Get selected category
         String category = spinnerCategory.getSelectedItem().toString();
-        String paymentMethod = spinnerPaymentMethod.getSelectedItem().toString();
-        String date = btnDate.getText().toString();
-        String time = btnTime.getText().toString();
 
-        if (incomeAmount.isEmpty()) {
-            Toast.makeText(this, "Please enter income amount", Toast.LENGTH_SHORT).show();
-            return;
+        // Get selected wallet (payment method)
+        String wallet = spinnerPaymentMethod.getSelectedItem().toString();
+
+        // Get notes
+        String notes = etNotes.getText().toString().trim();
+
+        // Get selected date and time
+        String date = btnDate.getText().toString(); // Assuming the button text is set to the selected date
+        String time = btnTime.getText().toString(); // Assuming the button text is set to the selected time
+
+        if (isEditMode) {
+            // Update existing income record
+//            currentIncome.setAmount(amount);
+//            currentIncome.setCategory(category);
+//            currentIncome.setWallet(wallet);
+//            currentIncome.setNotes(notes);
+//            currentIncome.setDate(date);
+//            currentIncome.setTime(time);
+//
+//            // Update the income in the database
+//            incomeDatabase.updateIncome(currentIncome);
+            Toast.makeText(this, "Expense Updated!", Toast.LENGTH_SHORT).show();
+        } else {
+            // Create new income record
+            AddExpence1 newExpence = new AddExpence1(amount, category, wallet, notes, date, time);
+            expenceDatabase.insertExpence(newExpence);
+            Toast.makeText(this, "Expense Added!", Toast.LENGTH_SHORT).show();
         }
 
-        // Here you can save the data to a database or API
-        Toast.makeText(this, "Income Saved Successfully!", Toast.LENGTH_SHORT).show();
+        // Finish activity
         finish();
     }
 }

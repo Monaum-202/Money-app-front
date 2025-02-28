@@ -39,10 +39,11 @@
             android:textColor="@color/black" />
 
         <EditText
-            android:id="@+id/et_income_amount"
+            android:id="@+id/et_expence_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter Income"
+            android:textColorHint="#0F0F0F"
             android:inputType="numberDecimal"
             android:background="@drawable/spinner_border"
             android:padding="8dp"
@@ -81,6 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/spinner_border"
+            android:textColorHint="#0F0F0F"
             android:padding="8dp"
             android:textColor="@color/black"/>
 
@@ -100,6 +102,7 @@
             android:layout_height="wrap_content"
             android:hint="Optional"
             android:background="@drawable/spinner_border"
+            android:textColorHint="#0F0F0F"
             android:padding="8dp"
             android:textColor="@color/black"/>
 

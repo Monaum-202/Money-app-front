@@ -88,7 +88,6 @@ public class AddIncome extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedCategory = parent.getItemAtPosition(position).toString();
-                Toast.makeText(AddIncome.this, "Selected Category: " + selectedCategory, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -110,7 +109,6 @@ public class AddIncome extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedPaymentMethod = parent.getItemAtPosition(position).toString();
-                Toast.makeText(AddIncome.this, "Selected Payment Method: " + selectedPaymentMethod, Toast.LENGTH_SHORT).show();
             }
 
             @Override

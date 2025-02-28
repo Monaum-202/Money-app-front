@@ -23,11 +23,11 @@
         tools:visibility="visible" />
 
     <EditText
-        android:id="@+id/email"
+        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Email"
+        android:hint="User Name"
         android:inputType="text"
         android:textColor="@color/black"
         android:textColorHint="#000000"

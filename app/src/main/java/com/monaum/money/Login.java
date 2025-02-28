@@ -19,7 +19,7 @@ import com.monaum.money.dbUtill.Database;
 public class Login extends AppCompatActivity {
 
 
-    private EditText email, password;
+    private EditText name, password;
     private Button btnLogin;
     private TextView tvRegister;
 
@@ -28,7 +28,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-        email = findViewById(R.id.email);
+        name = findViewById(R.id.name);
         password = findViewById(R.id.password);
 
         btnLogin = findViewById(R.id.login);
@@ -38,19 +38,19 @@ public class Login extends AppCompatActivity {
 
         btnLogin.setOnClickListener(v -> {
 
-            String mail = email.getText().toString();
+            String username = name.getText().toString();
             String pass = password.getText().toString();
 
 
             // Validate fields
-            if (mail.isEmpty() || pass.isEmpty()) {
+            if (username.isEmpty() || pass.isEmpty()) {
                 Toast.makeText(Login.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             try {
                 Database db = new Database(getApplicationContext());
-                int val = db.loginUser(mail, pass);
+                int val = db.loginUser(username, pass);
 
                 if (val < 1) {
                     Toast.makeText(Login.this, "Invalid Email or Password", Toast.LENGTH_SHORT).show();

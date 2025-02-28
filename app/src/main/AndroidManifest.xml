@@ -37,10 +37,10 @@
             android:name=".restApi.StudentHomeActivity"
             android:exported="true" />
         <activity
-            android:name=".Login"
+            android:name=".AddIncome"
             android:exported="true" />
         <activity
-            android:name=".AddIncome"
+            android:name=".Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
