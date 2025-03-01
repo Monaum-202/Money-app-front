@@ -24,7 +24,18 @@
             android:src="@drawable/drawermenu"
             android:contentDescription="Drawer Menu"/>
 
+        <TextView
+            android:id="@+id/tv_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="Balance: 0.00"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </LinearLayout>
+
 
     <!-- Action Buttons Layout -->
     <LinearLayout
@@ -82,5 +93,17 @@
             android:padding="8dp"
             android:src="@drawable/refresh" />
     </LinearLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_margin="10dp">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
 
 </LinearLayout>

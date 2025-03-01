@@ -323,6 +323,36 @@ public class Database extends SQLiteOpenHelper {
 
 
 
+    // Get Total Income
+    public double getTotalIncome() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT SUM(amount) FROM income", null);
+        double totalIncome = 0;
+        if (cursor.moveToFirst()) {
+            totalIncome = cursor.getDouble(0);
+        }
+        cursor.close();
+        return totalIncome;
+    }
+
+    // Get Total Expense
+    public double getTotalExpense() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT SUM(amount) FROM expence", null);
+        double totalExpense = 0;
+        if (cursor.moveToFirst()) {
+            totalExpense = cursor.getDouble(0);
+        }
+        cursor.close();
+        return totalExpense;
+    }
+
+    // Get Current Balance (Income - Expense)
+    public double getCurrentBalance() {
+        return getTotalIncome() - getTotalExpense();
+    }
+
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 

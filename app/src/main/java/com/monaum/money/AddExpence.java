@@ -206,10 +206,13 @@ public class AddExpence extends AppCompatActivity {
             // Create new income record
             AddExpence1 newExpence = new AddExpence1(amount, category, wallet, notes, date, time);
             expenceDatabase.insertExpence(newExpence);
+
             Toast.makeText(this, "Expense Added!", Toast.LENGTH_SHORT).show();
         }
 
         // Finish activity
+        recreate();
         finish();
+        recreate();
     }
 }
