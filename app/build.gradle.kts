@@ -47,5 +47,4 @@ dependencies {
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
     implementation (libs.volley)
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

@@ -29,13 +29,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-
-//        // Check if activity needs to be refreshed
-//        if (shouldRefresh()) {
-//            restartActivity();
-//            return; // Stop further execution to avoid duplicate setup
-//        }
-
         setContentView(R.layout.activity_main);
 
         // Initialize UI components
@@ -88,25 +81,6 @@ public class MainActivity extends AppCompatActivity {
         btnRefresh.setOnClickListener(v -> recreate());
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        // Clear the refresh flag to prevent unintended restarts
-//        getIntent().removeExtra("REFRESH");
-//    }
-//
-//    // Check if the activity needs to be restarted
-//    private boolean shouldRefresh() {
-//        return getIntent().getBooleanExtra("REFRESH", false) == false;
-//    }
-//
-//    // Restart the activity and set a flag to prevent infinite loops
-//    private void restartActivity() {
-//        Intent intent = new Intent(this, MainActivity.class);
-//        intent.putExtra("REFRESH", true);
-//        startActivity(intent);
-//        finish();
-//    }
 
     private void updateBalance() {
         double balance = dbHelper.getCurrentBalance();

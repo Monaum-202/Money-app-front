@@ -1,12 +1,11 @@
 package com.monaum.money.dbUtill;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import androidx.annotation.Nullable;
 
 import com.monaum.money.entity.AddExpence1;
@@ -18,94 +17,104 @@ import java.util.List;
 
 public class Database extends SQLiteOpenHelper {
     private static final String DB_NAME = "myDB";
-
     private static final int DB_VERSION = 1;
 
     public Database(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
-
-
     @Override
     public void onCreate(SQLiteDatabase db) {
+        String userQuery = "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "name TEXT, email TEXT, pass TEXT, cpass TEXT, dob TEXT)";
 
+        String incomeQuery = "CREATE TABLE income (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "amount REAL NOT NULL, category TEXT NOT NULL, wallet TEXT NOT NULL, " +
+                "notes TEXT, date TEXT NOT NULL, time TEXT NOT NULL)";
 
-        String userQuery = " create table users( id integer PRIMARY KEY AUTOINCREMENT," +
-                " name text, email text, pass text,cpass text, dob text)";
-
-
-        String incomeQuery = "CREATE TABLE income ( " +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "amount REAL NOT NULL, " +
-                "category TEXT NOT NULL, " +
-                "wallet TEXT NOT NULL, " +
-                "notes TEXT, " +
-                "date TEXT NOT NULL, " +
-                "time TEXT NOT NULL )";
-
-        String expenceQuery = "CREATE TABLE expence ( " +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "amount REAL NOT NULL, " +
-                "category TEXT NOT NULL, " +
-                "wallet TEXT NOT NULL, " +
-                "notes TEXT, " +
-                "date TEXT NOT NULL, " +
-                "time TEXT NOT NULL )";
-
-
+        String expenseQuery = "CREATE TABLE expence (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "amount REAL NOT NULL, category TEXT NOT NULL, wallet TEXT NOT NULL, " +
+                "notes TEXT, date TEXT NOT NULL, time TEXT NOT NULL)";
 
         db.execSQL(userQuery);
         db.execSQL(incomeQuery);
-        db.execSQL(expenceQuery);
+        db.execSQL(expenseQuery);
     }
 
-    public long insertUser(Users user) {
+    // Generic Insert Method for Users, Income, and Expense
+    private long insertData(String tableName, ContentValues values) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("NAME", user.username);
-        values.put("EMAIL", user.email);
-        values.put("PASS", user.password);
-        values.put("DOB", user.dob);
-
-        return db.insert("USERS", null, values);
+        return db.insert(tableName, null, values);
     }
 
+    // Insert User
+    public long insertUser(Users user) {
+        ContentValues values = new ContentValues();
+        values.put("name", user.username);
+        values.put("email", user.email);
+        values.put("pass", user.password);
+        values.put("dob", user.dob);
+        return insertData("users", values);  // Reuse insertData method
+    }
 
+    // Insert Income
+    public long insertIncome(AddIncome1 income) {
+        ContentValues values = new ContentValues();
+        values.put("amount", income.getAmount());
+        values.put("category", income.getCategory());
+        values.put("wallet", income.getWallet());
+        values.put("notes", income.getNotes());
+        values.put("date", income.getDate());
+        values.put("time", income.getTime());
+        return insertData("income", values);  // Reuse insertData method
+    }
 
-    // Get a user by username
+    // Insert Expense
+    public long insertExpence(AddExpence1 expense) {
+        ContentValues values = new ContentValues();
+        values.put("amount", expense.getAmount());
+        values.put("category", expense.getCategory());
+        values.put("wallet", expense.getWallet());
+        values.put("notes", expense.getNotes());
+        values.put("date", expense.getDate());
+        values.put("time", expense.getTime());
+        return insertData("expence", values);  // Reuse insertData method
+    }
+
+    // Get User By ID
     public Users getUserByUserID(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("USERS", null, "id = ?", new String[]{String.valueOf(id)},
-                null, null, null);
+        Cursor cursor = null;
+        try {
+            cursor = db.query("users", null, "id = ?", new String[]{String.valueOf(id)},
+                    null, null, null);
 
-        if (cursor != null) {
-            cursor.moveToFirst();
-            @SuppressLint("Range")
-            Users user = new Users(
-                    cursor.getInt(cursor.getColumnIndex("id")),
-                    cursor.getString(cursor.getColumnIndex("name")),
-                    cursor.getString(cursor.getColumnIndex("email")),
-                    cursor.getString(cursor.getColumnIndex("PASS")),
-                    cursor.getString(cursor.getColumnIndex("cpass")),
-                    cursor.getString(cursor.getColumnIndex("DOB"))
-            );
-            cursor.close();
-            return user;
-        } else {
-            return null; // user not found
+            if (cursor != null && cursor.moveToFirst()) {
+                return new Users(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5)
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();  // Handle the exception properly (logging, etc.)
+        } finally {
+            if (cursor != null) cursor.close();
         }
+        return null;  // Return null if not found
     }
 
-    // Get all users from the database
-    public ArrayList<Users> getAllUsers() {
-        ArrayList<Users> userList = new ArrayList<>();
+    // Get All Users
+    public List<Users> getAllUsers() {
+        List<Users> userList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.query("USERS", null, null, null, null, null, null);
-        @SuppressLint("Recycle") Cursor cursor = db.rawQuery("select * from USERS ", null);
-
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT * FROM users", null);
+            while (cursor != null && cursor.moveToNext()) {
                 Users user = new Users(
                         cursor.getInt(0),
                         cursor.getString(1),
@@ -116,13 +125,15 @@ public class Database extends SQLiteOpenHelper {
                 );
                 userList.add(user);
             }
-            cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();  // Log the error properly
+        } finally {
+            if (cursor != null) cursor.close();
         }
-
         return userList;
     }
 
-    // Update user details
+    // Update User
     public int updateUser(Users user) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -131,73 +142,34 @@ public class Database extends SQLiteOpenHelper {
         values.put("pass", user.password);
         values.put("dob", user.dob);
 
-        return db.update("USERS", values, "id" + " = ?", new String[]{String.valueOf(user.id)});
+        return db.update("users", values, "id = ?", new String[]{String.valueOf(user.id)});
     }
 
-    // Delete user by username
+    // Delete User by ID
     public void deleteUser(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("USERS", "id" + " = ?", new String[]{String.valueOf(id)});
+        db.delete("users", "id = ?", new String[]{String.valueOf(id)});
     }
 
-    public int loginUser(String name, String password){
-        String[] arr = new String[2];
-        arr[0] = name;
-        arr[1] = password;
+    // Login User (Returns 1 if valid, 0 if invalid)
+    public int loginUser(String name, String password) {
+        String[] arr = new String[]{name, password};
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c = db.rawQuery(" select * from users where name=? and pass=? ", arr);
-        if (c.moveToFirst()){
-            return 1;
+        Cursor c = db.rawQuery("SELECT * FROM users WHERE name=? AND pass=?", arr);
+        if (c.moveToFirst()) {
+            return 1;  // Successful login
         }
-        return 0;
+        return 0;  // Invalid credentials
     }
 
-
-    // Create - Insert Income
-    public long insertIncome(AddIncome1 income) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put("amount", income.getAmount());
-        values.put("category", income.getCategory());
-        values.put("wallet", income.getWallet());
-        values.put("notes", income.getNotes());
-        values.put("date", income.getDate());
-        values.put("time", income.getTime());
-
-        return db.insert("income", null, values);
-    }
-
-    // Read - Get Income by ID
-    public AddIncome1 getIncomeById(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("income", null, "id = ?", new String[]{String.valueOf(id)},
-                null, null, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            AddIncome1 income = new AddIncome1(
-                    cursor.getLong(0),
-                    cursor.getDouble(1),
-                    cursor.getString(2),
-                    cursor.getString(3),
-                    cursor.getString(4),
-                    cursor.getString(5),
-                    cursor.getString(6)
-            );
-            cursor.close();
-            return income;
-        }
-        return null; // Return null if no income found
-    }
-
-    // Read - Get All Income Records
+    // Get All Income Records
     public List<AddIncome1> getAllIncome() {
         List<AddIncome1> incomeList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM income", null);
-
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT * FROM income", null);
+            while (cursor != null && cursor.moveToNext()) {
                 AddIncome1 income = new AddIncome1(
                         cursor.getLong(0),
                         cursor.getDouble(1),
@@ -209,15 +181,44 @@ public class Database extends SQLiteOpenHelper {
                 );
                 incomeList.add(income);
             }
-            cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();  // Log the error properly
+        } finally {
+            if (cursor != null) cursor.close();
         }
         return incomeList;
     }
 
-    // Update - Update Income
+    // Get Income By ID
+    public AddIncome1 getIncomeById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.query("income", null, "id = ?", new String[]{String.valueOf(id)},
+                    null, null, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                return new AddIncome1(
+                        cursor.getLong(0),
+                        cursor.getDouble(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6)
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();  // Log the error properly
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return null;
+    }
+
+    // Update Income
     public int updateIncome(AddIncome1 income) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues values = new ContentValues();
         values.put("amount", income.getAmount());
         values.put("category", income.getCategory());
@@ -229,60 +230,20 @@ public class Database extends SQLiteOpenHelper {
         return db.update("income", values, "id = ?", new String[]{String.valueOf(income.getId())});
     }
 
-    // Delete - Delete Income
+    // Delete Income by ID
     public void deleteIncome(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("income", "id = ?", new String[]{String.valueOf(id)});
     }
 
-
-
-
-    // Create - Insert expence
-    public long insertExpence(AddExpence1 expence) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put("amount", expence.getAmount());
-        values.put("category", expence.getCategory());
-        values.put("wallet", expence.getWallet());
-        values.put("notes", expence.getNotes());
-        values.put("date", expence.getDate());
-        values.put("time", expence.getTime());
-
-        return db.insert("expence", null, values);
-    }
-
-    // Read - Get Income by ID
-    public AddExpence1 getExpenceById(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("expence", null, "id = ?", new String[]{String.valueOf(id)},
-                null, null, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            AddExpence1 expence = new AddExpence1(
-                    cursor.getLong(0),
-                    cursor.getDouble(1),
-                    cursor.getString(2),
-                    cursor.getString(3),
-                    cursor.getString(4),
-                    cursor.getString(5),
-                    cursor.getString(6)
-            );
-            cursor.close();
-            return expence;
-        }
-        return null; // Return null if no income found
-    }
-
-    // Read - Get All Income Records
+    // Get All Expense Records
     public List<AddExpence1> getAllExpence() {
         List<AddExpence1> expenceList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM expence", null);
-
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT * FROM expence", null);
+            while (cursor != null && cursor.moveToNext()) {
                 AddExpence1 expence = new AddExpence1(
                         cursor.getLong(0),
                         cursor.getDouble(1),
@@ -294,15 +255,44 @@ public class Database extends SQLiteOpenHelper {
                 );
                 expenceList.add(expence);
             }
-            cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();  // Log the error properly
+        } finally {
+            if (cursor != null) cursor.close();
         }
         return expenceList;
     }
 
-    // Update - Update Income
-    public int updateIncome(AddExpence1 expence) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    // Get Expense By ID
+    public AddExpence1 getExpenceById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.query("expence", null, "id = ?", new String[]{String.valueOf(id)},
+                    null, null, null);
 
+            if (cursor != null && cursor.moveToFirst()) {
+                return new AddExpence1(
+                        cursor.getLong(0),
+                        cursor.getDouble(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6)
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();  // Log the error properly
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return null;
+    }
+
+    // Update Expense
+    public int updateExpence(AddExpence1 expence) {
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("amount", expence.getAmount());
         values.put("category", expence.getCategory());
@@ -314,14 +304,11 @@ public class Database extends SQLiteOpenHelper {
         return db.update("expence", values, "id = ?", new String[]{String.valueOf(expence.getId())});
     }
 
-    // Delete - Delete Income
+    // Delete Expense by ID
     public void deleteExpence(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("expence", "id = ?", new String[]{String.valueOf(id)});
     }
-
-
-
 
     // Get Total Income
     public double getTotalIncome() {
@@ -352,9 +339,14 @@ public class Database extends SQLiteOpenHelper {
         return getTotalIncome() - getTotalExpense();
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        // Handle schema changes (if required)
+        if (oldVersion < newVersion) {
+            db.execSQL("DROP TABLE IF EXISTS users");
+            db.execSQL("DROP TABLE IF EXISTS income");
+            db.execSQL("DROP TABLE IF EXISTS expence");
+            onCreate(db);  // Recreate the tables
+        }
     }
 }
