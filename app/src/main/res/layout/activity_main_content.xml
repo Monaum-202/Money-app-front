@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white">
 
@@ -36,15 +36,14 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-
     <!-- Action Buttons Layout -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="62dp"
-        android:elevation="20dp"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="4dp">
+        android:padding="8dp">
 
         <ImageButton
             android:id="@+id/btn_add"
@@ -94,6 +93,20 @@
             android:src="@drawable/refresh" />
     </LinearLayout>
 
-
-
+    <Spinner
+        android:id="@+id/monthSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/spinner_background"
+        android:padding="8dp" />
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/chart_background" />
 </LinearLayout>
+

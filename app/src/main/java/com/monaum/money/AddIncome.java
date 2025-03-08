@@ -124,7 +124,7 @@ public class AddIncome extends AppCompatActivity {
                         selectedYear = year;
                         selectedMonth = month;
                         selectedDay = day;
-                        btnDate.setText(day + "-" + (month + 1) + "-" + year);
+                        btnDate.setText(String.format("%02d-%02d-%d", day, month + 1, year));
                     }, selectedYear, selectedMonth, selectedDay);
             datePickerDialog.show();
         });
