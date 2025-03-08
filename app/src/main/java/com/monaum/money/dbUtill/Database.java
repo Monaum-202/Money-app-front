@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 
 import com.monaum.money.entity.AddExpence1;
 import com.monaum.money.entity.AddIncome1;
+import com.monaum.money.entity.Transaction;
 import com.monaum.money.entity.Users;
 
 import java.util.ArrayList;
@@ -167,6 +168,7 @@ public class Database extends SQLiteOpenHelper {
         List<AddIncome1> incomeList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = null;
+
         try {
             cursor = db.rawQuery("SELECT * FROM income", null);
             while (cursor != null && cursor.moveToNext()) {
@@ -182,9 +184,10 @@ public class Database extends SQLiteOpenHelper {
                 incomeList.add(income);
             }
         } catch (Exception e) {
-            e.printStackTrace();  // Log the error properly
+            e.printStackTrace();
         } finally {
             if (cursor != null) cursor.close();
+            db.close(); // Close DB properly
         }
         return incomeList;
     }
@@ -261,6 +264,34 @@ public class Database extends SQLiteOpenHelper {
             if (cursor != null) cursor.close();
         }
         return expenceList;
+    }
+
+
+    private List<AddExpence1> getExpenses(Context context, String month) {
+        List<AddExpence1> expensesList = new ArrayList<>();
+        SQLiteDatabase db = new Database(context).getReadableDatabase();
+
+        // Filter by month using SQLite query
+        Cursor cursor = db.rawQuery("SELECT * FROM expence WHERE strftime('%m', date) = ?", new String[]{month});
+
+        if (cursor.moveToFirst()) {
+            do {
+                AddExpence1 expense = new AddExpence1();
+                expense.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
+                expense.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("amount")));
+                expense.setCategory(cursor.getString(cursor.getColumnIndexOrThrow("category")));
+                expense.setWallet(cursor.getString(cursor.getColumnIndexOrThrow("wallet")));
+                expense.setNotes(cursor.getString(cursor.getColumnIndexOrThrow("notes")));
+                expense.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
+                expense.setTime(cursor.getString(cursor.getColumnIndexOrThrow("time")));
+
+                expensesList.add(expense);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return expensesList;
     }
 
     // Get Expense By ID
@@ -349,4 +380,40 @@ public class Database extends SQLiteOpenHelper {
             onCreate(db);  // Recreate the tables
         }
     }
+
+
+
+    public List<Transaction> getAllTransactions() {
+        List<Transaction> transactionList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT id, amount, category, wallet, date, time, 'income' AS type FROM income " +
+                    "UNION ALL " +
+                    "SELECT id, amount, category, wallet, date, time, 'expence' AS type FROM expence " +
+                    "ORDER BY time DESC, date DESC";
+
+            cursor = db.rawQuery(query, null);
+            while (cursor != null && cursor.moveToNext()) {
+                Transaction transaction = new Transaction(
+                        cursor.getLong(0),  // ID
+                        cursor.getDouble(1), // Amount
+                        cursor.getString(2), // Category
+                        cursor.getString(3), // Wallet
+                        cursor.getString(4), // Date
+                        cursor.getString(5),  // Type (income/expense)
+                        cursor.getString(6)
+                );
+                transactionList.add(transaction);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close(); // Close DB properly
+        }
+        return transactionList;
+    }
+
 }

@@ -1,26 +1,18 @@
 package com.monaum.money;
 
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.monaum.money.dbUtill.Database;
 import com.monaum.money.entity.AddExpence1;
-import com.monaum.money.entity.AddIncome1;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,23 +20,27 @@ import java.util.List;
 
 public class AddExpence extends AppCompatActivity {
 
-    private EditText etExpenceAmount, etNotes;
+    private EditText etExpenseAmount, etNotes;
     private Spinner spinnerCategory, spinnerPaymentMethod;
     private Button btnDate, btnTime, btnSave;
+    private ImageButton btnBack;
     private int selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute;
 
-    private ImageButton btnBack;
-
     private List<String> categoryList, paymentMethodList;
-
     private boolean isEditMode = false;
+
+    private Database expenseDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expence);
 
-        etExpenceAmount = findViewById(R.id.et_expence_amount);
+        // Initialize Database
+        expenseDatabase = new Database(this);
+
+        // Initialize UI elements
+        etExpenseAmount = findViewById(R.id.et_expence_amount);
         etNotes = findViewById(R.id.et_notes);
         spinnerCategory = findViewById(R.id.spinner_category);
         spinnerPaymentMethod = findViewById(R.id.spinner_payment_method);
@@ -60,7 +56,6 @@ public class AddExpence extends AppCompatActivity {
         selectedDay = calendar.get(Calendar.DAY_OF_MONTH);
         selectedHour = calendar.get(Calendar.HOUR_OF_DAY);
         selectedMinute = calendar.get(Calendar.MINUTE);
-
 
         // Populate Category List
         categoryList = new ArrayList<>();
@@ -81,7 +76,6 @@ public class AddExpence extends AppCompatActivity {
         categoryList.add("Charity");
         categoryList.add("Other");
 
-
         // Populate Payment Method List
         paymentMethodList = new ArrayList<>();
         paymentMethodList.add("Cash");
@@ -90,63 +84,31 @@ public class AddExpence extends AppCompatActivity {
         paymentMethodList.add("PayPal");
         paymentMethodList.add("Other");
 
-
-
-        // Create Adapter for Category Spinner
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, categoryList);
+        // Set up category spinner
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, categoryList);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Set Adapter to Category Spinner
         spinnerCategory.setAdapter(categoryAdapter);
 
-        // Handle Category Spinner Item Selection
-        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedCategory = parent.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
-            }
-        });
-
-        // Create Adapter for Payment Method Spinner
-        ArrayAdapter<String> paymentAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, paymentMethodList);
+        // Set up payment method spinner
+        ArrayAdapter<String> paymentAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, paymentMethodList);
         paymentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Set Adapter to Payment Method Spinner
         spinnerPaymentMethod.setAdapter(paymentAdapter);
 
-        // Handle Payment Method Spinner Item Selection
-        spinnerPaymentMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedPaymentMethod = parent.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
-            }
-        });
-
-        // Date picker dialog
+        // Date Picker
         btnDate.setOnClickListener(view -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                     (datePicker, year, month, day) -> {
                         selectedYear = year;
                         selectedMonth = month;
                         selectedDay = day;
-                        btnDate.setText(day + "-" + (month + 1) + "-" + year);
+                        btnDate.setText(String.format("%02d-%02d-%d", day, month + 1, year));
                     }, selectedYear, selectedMonth, selectedDay);
             datePickerDialog.show();
         });
 
-        // Time picker dialog
+        // Time Picker
         btnTime.setOnClickListener(view -> {
             TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                     (timePicker, hour, minute) -> {
@@ -158,61 +120,55 @@ public class AddExpence extends AppCompatActivity {
         });
 
         // Save button action
-        btnSave.setOnClickListener(view -> saveExpence());
+        btnSave.setOnClickListener(view -> saveExpense());
 
-
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // Closes the current activity and goes back to the previous one
-            }
-        });
+        // Back button action
+        btnBack.setOnClickListener(v -> finish()); // Closes the activity
     }
 
+    private void saveExpense() {
+        // Get expense amount
+        String amountStr = etExpenseAmount.getText().toString().trim();
+        double amount = 0;
 
-    Database expenceDatabase = new Database(this);
-
-    private void saveExpence() {
-        // Get income amount
-        String amountStr = etExpenceAmount.getText().toString().trim();
-        double amount = Double.parseDouble(amountStr); // Ensure to handle NumberFormatException as needed
+        try {
+            amount = Double.parseDouble(amountStr);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Invalid amount entered!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Get selected category
         String category = spinnerCategory.getSelectedItem().toString();
 
-        // Get selected wallet (payment method)
+        // Get selected payment method
         String wallet = spinnerPaymentMethod.getSelectedItem().toString();
 
         // Get notes
         String notes = etNotes.getText().toString().trim();
 
         // Get selected date and time
-        String date = btnDate.getText().toString(); // Assuming the button text is set to the selected date
-        String time = btnTime.getText().toString(); // Assuming the button text is set to the selected time
+        String date = btnDate.getText().toString();
+        String time = btnTime.getText().toString();
+
+        if (date.equals("Select Date") || time.equals("Select Time")) {
+            Toast.makeText(this, "Please select a valid date and time", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (isEditMode) {
-            // Update existing income record
-//            currentIncome.setAmount(amount);
-//            currentIncome.setCategory(category);
-//            currentIncome.setWallet(wallet);
-//            currentIncome.setNotes(notes);
-//            currentIncome.setDate(date);
-//            currentIncome.setTime(time);
-//
-//            // Update the income in the database
-//            incomeDatabase.updateIncome(currentIncome);
+            // Update existing expense record
+            AddExpence1 updatedExpense = new AddExpence1(amount, category, wallet, notes, date, time);
+            expenseDatabase.updateExpence(updatedExpense);
             Toast.makeText(this, "Expense Updated!", Toast.LENGTH_SHORT).show();
         } else {
-            // Create new income record
-            AddExpence1 newExpence = new AddExpence1(amount, category, wallet, notes, date, time);
-            expenceDatabase.insertExpence(newExpence);
-
+            // Create new expense record
+            AddExpence1 newExpense = new AddExpence1(amount, category, wallet, notes, date, time);
+            expenseDatabase.insertExpence(newExpense);
             Toast.makeText(this, "Expense Added!", Toast.LENGTH_SHORT).show();
         }
 
         // Finish activity
-        recreate();
         finish();
-        recreate();
     }
 }

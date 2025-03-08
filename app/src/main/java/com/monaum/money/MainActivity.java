@@ -61,13 +61,18 @@ public class MainActivity extends AppCompatActivity {
                 } else if (itemId == R.id.navIncomeStatus) {
                     Toast.makeText(MainActivity.this, "Income Status clicked", Toast.LENGTH_SHORT).show();
                 } else if (itemId == R.id.navExpenseStatus) {
-                    Toast.makeText(MainActivity.this, "Expense Status clicked", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(MainActivity.this, ExpenseChart.class));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 } else if (itemId == R.id.navBudget) {
                     Toast.makeText(MainActivity.this, "Budget clicked", Toast.LENGTH_SHORT).show();
                 } else if (itemId == R.id.navPlan) {
                     Toast.makeText(MainActivity.this, "Plan clicked", Toast.LENGTH_SHORT).show();
                 } else if (itemId == R.id.navHistory) {
-                    Toast.makeText(MainActivity.this, "History clicked", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(MainActivity.this, History.class));  // Assume HomeActivity is your landing page
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                } else if (itemId == R.id.navEHistory) {
+                    startActivity(new Intent(MainActivity.this, ExpenseHistory.class));  // Assume HomeActivity is your landing page
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 }
 
                 drawerLayout.close();

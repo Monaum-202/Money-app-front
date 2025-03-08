@@ -41,6 +41,8 @@ public class UserAdapter extends ArrayAdapter<Users> {
         delete = view.findViewById(R.id.listDelete);
          edit = view.findViewById(R.id.listUpdate);
 
+
+
         listName.setText(listData != null ? listData.username : "");
         listEmail.setText(listData != null ? listData.email : "");
         listDob.setText(listData != null ? listData.dob : "");

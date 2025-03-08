@@ -2,21 +2,21 @@ package com.monaum.money.entity;
 
 public class AddExpence1 {
 
-    private Long id;
+    public Long id;
 
-    private Double amount;
-
-
-    private String category;
-
-    private String wallet;
-
-    private String notes;
+    public Double amount;
 
 
-    private String date;
+    public String category;
 
-    private String time;
+    public String wallet;
+
+    public String notes;
+
+
+    public String date;
+
+    public String time;
 
     public AddExpence1() {
     }

@@ -19,6 +19,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ExpenseHistory"
+            android:exported="false" />
+        <activity
+            android:name=".ExpenseChart"
+            android:exported="false" />
+        <activity
+            android:name=".History"
+            android:exported="false" />
+        <activity
             android:name=".StudentAddActivity"
             android:exported="false" />
         <activity

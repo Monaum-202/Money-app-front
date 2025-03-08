@@ -44,7 +44,11 @@
         <item
             android:id="@+id/navHistory"
             android:icon="@drawable/history"
-            android:title="History" />
+            android:title="Income History" />
+        <item
+            android:id="@+id/navEHistory"
+            android:icon="@drawable/history"
+            android:title="Expense History" />
 
     </group>
 
