@@ -416,4 +416,25 @@ public class Database extends SQLiteOpenHelper {
         return transactionList;
     }
 
+
+
+
+    public double getTotalIncomeForMonthYear(String month, String year) {
+        double totalIncome = 0.0;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT SUM(amount) FROM income WHERE strftime('%m', date) = ? AND strftime('%Y', date) = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{month, year});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                totalIncome = cursor.getDouble(0); // Get the total income sum
+            }
+            cursor.close();
+        }
+
+        return totalIncome;
+    }
+
+
 }

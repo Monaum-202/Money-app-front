@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -45,13 +44,14 @@ public class MainActivity extends AppCompatActivity {
 
     // UI Components for LineChart and Spinner
     private LineChart lineChart;
-    private Spinner monthSpinner;
+    private Spinner monthSpinner, yearSpinner;
 
-    private TextView tvBalance;
+    private TextView tvBalance, tvTotalIncome, tvTotalExpense, tvTotalSaving;
     private Database dbHelper;
     private SQLiteDatabase database;
 
     private String selectedMonth = "03"; // Default to March
+    private String selectedYear = "2025"; // Default year
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,17 +69,22 @@ public class MainActivity extends AppCompatActivity {
         btnLoan = findViewById(R.id.btn_loan);
         btnRefresh = findViewById(R.id.btn_refresh);
         tvBalance = findViewById(R.id.tv_balance);
+        tvTotalIncome = findViewById(R.id.tv_total_income);
+        tvTotalExpense = findViewById(R.id.tv_total_expense);
+        tvTotalSaving = findViewById(R.id.tv_total_saving);
         monthSpinner = findViewById(R.id.monthSpinner);
+        yearSpinner = findViewById(R.id.yearSpinner);
         lineChart = findViewById(R.id.chart);
 
         dbHelper = new Database(this);
         database = openOrCreateDatabase("myDB", MODE_PRIVATE, null);
 
         updateBalance();
-
         setupChart();
-        setupMonthSpinner();
-        loadData(selectedMonth);
+        setupSpinners(); // Setup both month and year spinners
+
+        // Load data for the default month & year
+        loadData(selectedMonth, selectedYear);
 
         // Open drawer on button click
         buttonDrawerToggle.setOnClickListener(v -> drawerLayout.open());
@@ -144,52 +149,71 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Setup the Month Spinner for selecting the month
-    private void setupMonthSpinner() {
-        final String[] months = {"01 - January", "02 - February", "03 - March", "04 - April",
-                "05 - May", "06 - June", "07 - July", "08 - August", "09 - September",
-                "10 - October", "11 - November", "12 - December"};
+    // Setup the Month Spinner for selecting the month
+    private void setupSpinners() {
+        // Month names array (no numeric prefix)
+        final String[] months = {
+                "January", "February", "March", "April", "May", "June", "July", "August",
+                "September", "October", "November", "December"
+        };
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, months);
-        monthSpinner.setAdapter(adapter);
+        // Create the ArrayAdapter for the months
+        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, months);
+        monthSpinner.setAdapter(monthAdapter);
 
-        // Get current month (1-12) and adjust to match array index (0-11)
-        Calendar calendar = Calendar.getInstance();
-        int currentMonth = calendar.get(Calendar.MONTH); // 0 = January, 11 = December
+        // Get the current year and populate the Year Spinner (2024 - 2026)
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        List<String> years = new ArrayList<>();
+        for (int i = currentYear - 1; i <= currentYear + 1; i++) {
+            years.add(String.valueOf(i));
+        }
 
-        // Set the default month in Spinner
-        monthSpinner.setSelection(currentMonth);
+        // Create the ArrayAdapter for the years
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, years);
+        yearSpinner.setAdapter(yearAdapter);
 
-        // Extract and store selected month
-        selectedMonth = months[currentMonth].substring(0, 2);
+        // Set default selections
+        monthSpinner.setSelection(Calendar.getInstance().get(Calendar.MONTH)); // Set the current month
+        yearSpinner.setSelection(years.indexOf(String.valueOf(currentYear))); // Set the current year
 
+        // Update the selectedMonth & selectedYear when changed
         monthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedMonth = months[position].substring(0, 2); // Extract month number
-                loadData(selectedMonth);
+                selectedMonth = String.format("%02d", position + 1); // Convert month index to "01", "02", etc.
+                loadData(selectedMonth, selectedYear);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // Load data for the default selected month
-        loadData(selectedMonth);
+        yearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedYear = years.get(position);
+                loadData(selectedMonth, selectedYear);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        // Load data for the current month & year
+        loadData(selectedMonth, selectedYear);
     }
 
-    // Load data for the selected month and display in the LineChart
-    private void loadData(String selectedMonth) {
-        Map<Integer, Float> incomeMap = getMonthlyData("income", selectedMonth);
-        Map<Integer, Float> expenseMap = getMonthlyData("expence", selectedMonth);
+
+    // Load data for selected month & year
+    private void loadData(String selectedMonth, String selectedYear) {
+        Map<Integer, Float> incomeMap = getMonthlyData("income", selectedMonth, selectedYear);
+        Map<Integer, Float> expenseMap = getMonthlyData("expence", selectedMonth, selectedYear);
 
         List<Entry> incomeEntries = new ArrayList<>();
         List<Entry> expenseEntries = new ArrayList<>();
 
-        List<String> xValues = new ArrayList<>();
         float cumulativeIncome = 0f;
         float cumulativeExpense = 0f;
-        int lastDay = 0;
 
         for (int i = 1; i <= 31; i++) {
             float dailyIncome = incomeMap.getOrDefault(i, 0f);
@@ -198,81 +222,112 @@ public class MainActivity extends AppCompatActivity {
             cumulativeIncome += dailyIncome;
             cumulativeExpense += dailyExpense;
 
-            if (cumulativeIncome > 0 || cumulativeExpense > 0) {
-                lastDay = i;
-            }
-
             incomeEntries.add(new Entry(i, cumulativeIncome));
             expenseEntries.add(new Entry(i, cumulativeExpense));
-
-            xValues.add(String.valueOf(i));
         }
 
         LineDataSet incomeDataSet = new LineDataSet(incomeEntries, "Cumulative Income");
         incomeDataSet.setColor(Color.GREEN);
         incomeDataSet.setDrawCircles(false);
         incomeDataSet.setDrawValues(false);
-        incomeDataSet.setLineWidth(3f);
 
         LineDataSet expenseDataSet = new LineDataSet(expenseEntries, "Cumulative Expense");
         expenseDataSet.setColor(Color.RED);
         expenseDataSet.setDrawCircles(false);
         expenseDataSet.setDrawValues(false);
-        expenseDataSet.setLineWidth(3f);
 
         lineChart.setData(new LineData(incomeDataSet, expenseDataSet));
-
-        XAxis xAxis = lineChart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(xValues));
-        xAxis.setGranularity(1f);
-        xAxis.setDrawAxisLine(true);
-        xAxis.setDrawGridLines(true);
-
-        YAxis yAxis = lineChart.getAxisLeft();
-        yAxis.setAxisMinimum(0f);
-        yAxis.setDrawAxisLine(true);
-        yAxis.setDrawGridLines(true);
-
-        lineChart.getAxisRight().setEnabled(false);
-        lineChart.getDescription().setEnabled(false);
-
-        if (lastDay > 0) {
-            Description description = new Description();
-            description.setText("End Value: " + cumulativeIncome);
-            description.setTextSize(12f);
-            description.setPosition(lineChart.getXChartMax() - 100, lineChart.getYChartMax() - 50);
-            lineChart.setDescription(description);
-        }
-
         lineChart.invalidate();
+
+        // Update Total Income in the TextView
+        updateTotalIncome(selectedMonth, selectedYear);
+        updateTotalExpense(selectedMonth, selectedYear);
+        updateTotalSaving(selectedMonth, selectedYear);
     }
 
-    // Get the monthly data for either "income" or "expence"
-    private Map<Integer, Float> getMonthlyData(String tableName, String selectedMonth) {
+    // Get monthly data with year filter
+    private Map<Integer, Float> getMonthlyData(String tableName, String selectedMonth, String selectedYear) {
         Map<Integer, Float> dataMap = new HashMap<>();
         Cursor cursor = null;
 
         try {
             String query = "SELECT SUM(amount) AS total, SUBSTR(date, 1, 2) AS day FROM " + tableName +
-                    " WHERE SUBSTR(date, 4, 2) = ? GROUP BY day ORDER BY day";
+                    " WHERE SUBSTR(date, 4, 2) = ? AND SUBSTR(date, 7, 4) = ? GROUP BY day ORDER BY day";
 
-            cursor = database.rawQuery(query, new String[]{selectedMonth});
+            cursor = database.rawQuery(query, new String[]{selectedMonth, selectedYear});
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    int day = Integer.parseInt(cursor.getString(1));
-                    float totalAmount = cursor.getFloat(0);
+                    int day = Integer.parseInt(cursor.getString(cursor.getColumnIndex("day")));
+                    float totalAmount = cursor.getFloat(cursor.getColumnIndex("total"));
                     dataMap.put(day, totalAmount);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+            if (cursor != null) cursor.close();
         }
 
         return dataMap;
+    }
+
+    // Update the total income based on selected month and year
+    private void updateTotalIncome(String selectedMonth, String selectedYear) {
+        double totalIncome = getTotalIncomeForMonthYear(selectedMonth, selectedYear);
+        tvTotalIncome.setText("Total Income : " + String.format("%.2f", totalIncome) + " taka");
+    }
+
+    private void updateTotalExpense(String selectedMonth, String selectedYear) {
+        double totalIncome = getTotalExpenseForMonthYear(selectedMonth, selectedYear);
+        tvTotalExpense.setText("Total Expense : " + String.format("%.2f", totalIncome) + " taka");
+    }
+
+
+    private void updateTotalSaving(String selectedMonth, String selectedYear) {
+        double totalIncome = getTotalIncomeForMonthYear(selectedMonth, selectedYear);
+        double totalExpense = getTotalExpenseForMonthYear(selectedMonth, selectedYear);
+        double totalSaving = totalIncome - totalExpense;
+        tvTotalSaving.setText("Total Saving : " + String.format("%.2f", totalSaving) + " taka");
+    }
+    // Method to get total income for the selected month and year
+    private double getTotalIncomeForMonthYear(String selectedMonth, String selectedYear) {
+        double totalIncome = 0.0;
+        Cursor cursor = null;
+        try {
+            String query = "SELECT SUM(amount) AS total FROM income WHERE SUBSTR(date, 4, 2) = ? AND SUBSTR(date, 7, 4) = ?";
+            cursor = database.rawQuery(query, new String[]{selectedMonth, selectedYear});
+
+            if (cursor != null && cursor.moveToFirst()) {
+                totalIncome = cursor.getDouble(cursor.getColumnIndex("total"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+
+        return totalIncome;
+    }
+
+
+
+    private double getTotalExpenseForMonthYear(String selectedMonth, String selectedYear) {
+        double totalExpence = 0.0;
+        Cursor cursor = null;
+        try {
+            String query = "SELECT SUM(amount) AS total FROM expence WHERE SUBSTR(date, 4, 2) = ? AND SUBSTR(date, 7, 4) = ?";
+            cursor = database.rawQuery(query, new String[]{selectedMonth, selectedYear});
+
+            if (cursor != null && cursor.moveToFirst()) {
+                totalExpence = cursor.getDouble(cursor.getColumnIndex("total"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+
+        return totalExpence;
     }
 }

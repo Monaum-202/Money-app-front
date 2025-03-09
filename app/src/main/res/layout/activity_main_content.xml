@@ -22,7 +22,7 @@
             android:background="@android:color/transparent"
             android:padding="5dp"
             android:src="@drawable/drawermenu"
-            android:contentDescription="Drawer Menu"/>
+            android:contentDescription="Drawer Menu" />
 
         <TextView
             android:id="@+id/tv_balance"
@@ -34,6 +34,7 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
+
     </LinearLayout>
 
     <!-- Action Buttons Layout -->
@@ -43,7 +44,8 @@
         android:elevation="4dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:background="#F0F0F0">
 
         <ImageButton
             android:id="@+id/btn_add"
@@ -91,22 +93,93 @@
             android:contentDescription="Refresh"
             android:padding="8dp"
             android:src="@drawable/refresh" />
-    </LinearLayout>
 
-    <Spinner
-        android:id="@+id/monthSpinner"
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="1dp">
+
+        <!-- Month Spinner -->
+        <Spinner
+            android:id="@+id/monthSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+        android:background="@drawable/spinner_background"
+        android:paddingTop="1dp"
+        android:paddingBottom="1dp"/>
+
+        <!-- Year Spinner -->
+        <Spinner
+            android:id="@+id/yearSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/spinner_background"
-        android:padding="8dp" />
+        android:paddingTop="0dp"
+        android:paddingBottom="1dp"
+        android:layout_marginStart="8dp"/> <!-- Added margin between spinners -->
+
+    </LinearLayout>
+
+    <!-- LineChart -->
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_width="380dp"
+        android:layout_height="300dp"
         android:layout_margin="16dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/chart_background" />
-</LinearLayout>
+        android:layout_marginBottom="16dp"
+    android:background="@drawable/chart_background" />
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:text="Summary of this month"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_total_income"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:gravity="center"
+        android:text="Total Income: 0.00"
+        android:textColor="@color/green"
+        android:textSize="16sp"
+        android:textStyle="bold"
+         />
+    <TextView
+        android:id="@+id/tv_total_expense"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:gravity="center"
+        android:text="Total Expense: 0.00"
+        android:textColor="@color/red"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_total_saving"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:gravity="center"
+        android:text="Total Expense: 0.00"
+        android:textColor="#2F3FD3"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+</LinearLayout>
