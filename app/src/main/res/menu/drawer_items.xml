@@ -30,7 +30,7 @@
         <item
             android:id="@+id/navBudget"
             android:icon="@drawable/budget"
-            android:title="Budget" />
+            android:title="Yearly Transaction" />
 
         <item
             android:id="@+id/navPlan"
@@ -44,11 +44,24 @@
         <item
             android:id="@+id/navHistory"
             android:icon="@drawable/history"
-            android:title="Income History" />
+            android:title="Transaction History" />
+<!--        <item-->
+<!--            android:id="@+id/navEHistory"-->
+<!--            android:icon="@drawable/history"-->
+<!--            android:title="Expense History" />-->
+
+    </group>
+
+    <group
+        android:id="@+id/group5">
         <item
-            android:id="@+id/navEHistory"
+            android:id="@+id/navLogout"
             android:icon="@drawable/history"
-            android:title="Expense History" />
+            android:title="Log out" />
+        <!--        <item-->
+        <!--            android:id="@+id/navEHistory"-->
+        <!--            android:icon="@drawable/history"-->
+        <!--            android:title="Expense History" />-->
 
     </group>
 

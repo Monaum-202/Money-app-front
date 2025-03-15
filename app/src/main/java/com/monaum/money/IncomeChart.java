@@ -18,6 +18,9 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.github.mikephil.charting.charts.PieChart;
@@ -26,7 +29,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.material.navigation.NavigationView;
 import com.monaum.money.dbUtill.Database;
-import com.monaum.money.entity.AddExpence1;
+
+import com.monaum.money.entity.AddIncome1;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExpenseChart extends AppCompatActivity {
+public class IncomeChart extends AppCompatActivity {
 
     // Main Activity UI components
     DrawerLayout drawerLayout;
@@ -53,7 +57,7 @@ public class ExpenseChart extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_expense_chart);
+        setContentView(R.layout.activity_income_chart);
 
         // Initialize Main Activity UI components
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -94,23 +98,23 @@ public class ExpenseChart extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.navHome) {
-                startActivity( new Intent(ExpenseChart.this, MainActivity.class));
+                startActivity( new Intent(IncomeChart.this, MainActivity.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             } else if (itemId == R.id.navWalletStatus) {
-                startActivity( new Intent(ExpenseChart.this, WalletActivity.class));
+                startActivity( new Intent(IncomeChart.this, WalletActivity.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);            } else if (itemId == R.id.navIncomeStatus) {
-                startActivity(new Intent(ExpenseChart.this, IncomeChart.class));
+                startActivity(new Intent(IncomeChart.this, IncomeChart.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             } else if (itemId == R.id.navExpenseStatus) {
-                startActivity(new Intent(ExpenseChart.this, ExpenseChart.class));
+                startActivity(new Intent(IncomeChart.this, ExpenseChart.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             } else if (itemId == R.id.navBudget) {
-                startActivity(new Intent(ExpenseChart.this, BarChartActivity2.class));
+                startActivity(new Intent(IncomeChart.this, BarChartActivity2.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             } else if (itemId == R.id.navPlan) {
-                Toast.makeText(ExpenseChart.this, "Plan clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(IncomeChart.this, "Plan clicked", Toast.LENGTH_SHORT).show();
             } else if (itemId == R.id.navHistory) {
-                startActivity(new Intent(ExpenseChart.this, History.class));  // Assume HomeActivity is your landing page
+                startActivity(new Intent(IncomeChart.this, History.class));  // Assume HomeActivity is your landing page
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
             else if (itemId == R.id.navLogout) {
@@ -120,7 +124,7 @@ public class ExpenseChart extends AppCompatActivity {
                 editor.apply();
 
                 // Redirect to Login Activity
-                Intent intent = new Intent(ExpenseChart.this, Login.class);
+                Intent intent = new Intent(IncomeChart.this, Login.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear activity stack
                 startActivity(intent);
                 finish(); // Close MainActivity
@@ -132,8 +136,8 @@ public class ExpenseChart extends AppCompatActivity {
         });
 
         // Button Listeners
-        btnAdd.setOnClickListener(v -> startActivity(new Intent(ExpenseChart.this, AddIncome.class)));
-        btnExpense.setOnClickListener(v -> startActivity(new Intent(ExpenseChart.this, AddExpence.class)));
+        btnAdd.setOnClickListener(v -> startActivity(new Intent(IncomeChart.this, AddIncome.class)));
+        btnExpense.setOnClickListener(v -> startActivity(new Intent(IncomeChart.this, AddExpence.class)));
         btnRefresh.setOnClickListener(v -> recreate());
 
         // Setup Pie Chart and Spinner for ExpenseChart
@@ -151,7 +155,7 @@ public class ExpenseChart extends AppCompatActivity {
         pieChart.setRotationEnabled(true);
         pieChart.setHoleRadius(25f);
         pieChart.setTransparentCircleAlpha(0);
-        pieChart.setCenterText("Expense Chart");
+        pieChart.setCenterText("Income Chart");
         pieChart.setCenterTextSize(10);
         pieChart.setDrawEntryLabels(true);
     }
@@ -189,29 +193,29 @@ public class ExpenseChart extends AppCompatActivity {
     }
 
     // Fetch Expenses Filtered by Month (for "dd-MM-yyyy" format)
-    private List<AddExpence1> getExpensesByMonth(String month) {
-        List<AddExpence1> expensesList = new ArrayList<>();
+    private List<AddIncome1> getExpensesByMonth(String month) {
+        List<AddIncome1> incomesList = new ArrayList<>();
         SQLiteDatabase db = database.getReadableDatabase();
 
         // Fix query to extract month from "dd-MM-yyyy" format
-        String query = "SELECT * FROM expence WHERE substr(date, 4, 2) = ?";
+        String query = "SELECT * FROM income WHERE substr(date, 4, 2) = ?";
         Cursor cursor = db.rawQuery(query, new String[]{month});
 
         if (cursor.moveToFirst()) {
             do {
-                AddExpence1 expense = new AddExpence1();
-                expense.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
-                expense.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("amount")));
-                expense.setCategory(cursor.getString(cursor.getColumnIndexOrThrow("category")));
-                expense.setWallet(cursor.getString(cursor.getColumnIndexOrThrow("wallet")));
-                expense.setNotes(cursor.getString(cursor.getColumnIndexOrThrow("notes")));
-                expense.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
-                expense.setTime(cursor.getString(cursor.getColumnIndexOrThrow("time")));
+                AddIncome1 income1 = new AddIncome1();
+                income1.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
+                income1.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("amount")));
+                income1.setCategory(cursor.getString(cursor.getColumnIndexOrThrow("category")));
+                income1.setWallet(cursor.getString(cursor.getColumnIndexOrThrow("wallet")));
+                income1.setNotes(cursor.getString(cursor.getColumnIndexOrThrow("notes")));
+                income1.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
+                income1.setTime(cursor.getString(cursor.getColumnIndexOrThrow("time")));
 
-                expensesList.add(expense);
+                incomesList.add(income1);
 
                 // Debugging Log
-                Log.d("ExpenseChart", "Fetched: " + expense.getDate() + " - " + expense.getAmount());
+                Log.d("ExpenseChart", "Fetched: " + income1.getDate() + " - " + income1.getAmount());
             } while (cursor.moveToNext());
         } else {
             Log.d("ExpenseChart", "No data found for month: " + month);
@@ -220,15 +224,15 @@ public class ExpenseChart extends AppCompatActivity {
         cursor.close();
         db.close();
 
-        return expensesList;
+        return incomesList;
     }
 
-    private Map<String, Float> calculateCategoryTotals(List<AddExpence1> expenses) {
+    private Map<String, Float> calculateCategoryTotals(List<AddIncome1> incomes) {
         Map<String, Float> categoryTotals = new HashMap<>();
 
-        for (AddExpence1 expense : expenses) {
-            String category = expense.getCategory();
-            float amount = expense.getAmount().floatValue();
+        for (AddIncome1 income : incomes) {
+            String category = income.getCategory();
+            float amount = income.getAmount().floatValue();
 
             if (categoryTotals.containsKey(category)) {
                 categoryTotals.put(category, categoryTotals.get(category) + amount);
@@ -240,8 +244,8 @@ public class ExpenseChart extends AppCompatActivity {
     }
 
     private void updateChart() {
-        List<AddExpence1> expenses = getExpensesByMonth(selectedMonth);
-        Map<String, Float> categoryTotals = calculateCategoryTotals(expenses);
+        List<AddIncome1> incomes = getExpensesByMonth(selectedMonth);
+        Map<String, Float> categoryTotals = calculateCategoryTotals(incomes);
 
         if (categoryTotals.isEmpty()) {
             pieChart.clear();
@@ -259,7 +263,7 @@ public class ExpenseChart extends AppCompatActivity {
             yEntries.add(new PieEntry(entry.getValue(), entry.getKey())); // Amount & Category
         }
 
-        PieDataSet pieDataSet = new PieDataSet(yEntries, "Expenses by Category");
+        PieDataSet pieDataSet = new PieDataSet(yEntries, "Incomes by Category");
         pieDataSet.setSliceSpace(2);
         pieDataSet.setValueTextSize(12);
         pieDataSet.setValueTextColor(Color.WHITE);

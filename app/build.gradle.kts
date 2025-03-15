@@ -50,4 +50,6 @@ dependencies {
     implementation (libs.converter.gson)
     implementation (libs.volley)
 
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
+
 }

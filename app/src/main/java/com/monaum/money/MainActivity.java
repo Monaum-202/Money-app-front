@@ -1,11 +1,11 @@
 package com.monaum.money;
-
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,7 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -37,6 +39,8 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+
+
     // UI Components for Drawer and Buttons
     private DrawerLayout drawerLayout;
     private ImageButton buttonDrawerToggle, btnAdd, btnExpense, btnTransfer, btnLoan, btnRefresh;
@@ -48,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvBalance, tvTotalIncome, tvTotalExpense, tvTotalSaving;
     private Database dbHelper;
+
+
     private SQLiteDatabase database;
 
     private String selectedMonth = "03"; // Default to March
@@ -89,36 +95,64 @@ public class MainActivity extends AppCompatActivity {
         // Open drawer on button click
         buttonDrawerToggle.setOnClickListener(v -> drawerLayout.open());
 
+
+        View headerView = navigationView.getHeaderView(0);
+
+        // Find the TextView by its ID from the header view
+        TextView headerText = headerView.findViewById(R.id.h_name); // Corrected this line
+
+        // Retrieve username from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("myData", Context.MODE_PRIVATE);
+        String username = sharedPreferences.getString("headerTextKey", "Guest");  // Default to "Guest" if not found
+
+        // Set the username to headerText TextView
+        headerText.setText(username);
+
+
         // Navigation Drawer Item Clicks
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
             if (itemId == R.id.navHome) {
-                Toast.makeText(MainActivity.this, "Home clicked", Toast.LENGTH_SHORT).show();
+                startActivity( new Intent(MainActivity.this, MainActivity.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             } else if (itemId == R.id.navWalletStatus) {
-                Toast.makeText(MainActivity.this, "Wallet Status clicked", Toast.LENGTH_SHORT).show();
+                startActivity( new Intent(MainActivity.this, WalletActivity.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             } else if (itemId == R.id.navIncomeStatus) {
-                Toast.makeText(MainActivity.this, "Income Status clicked", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, IncomeChart.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             } else if (itemId == R.id.navExpenseStatus) {
                 startActivity(new Intent(MainActivity.this, ExpenseChart.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             } else if (itemId == R.id.navBudget) {
-                startActivity(new Intent(MainActivity.this, BarChartActivity.class));
+                startActivity(new Intent(MainActivity.this, BarChartActivity2.class));
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             } else if (itemId == R.id.navPlan) {
-                startActivity(new Intent(MainActivity.this, LineChartActivity.class));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                Toast.makeText(MainActivity.this, "Plan clicked", Toast.LENGTH_SHORT).show();
             } else if (itemId == R.id.navHistory) {
-                startActivity(new Intent(MainActivity.this, History.class));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            } else if (itemId == R.id.navEHistory) {
-                startActivity(new Intent(MainActivity.this, ExpenseHistory.class));
+                startActivity(new Intent(MainActivity.this, History.class));  // Assume HomeActivity is your landing page
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
+            else if (itemId == R.id.navLogout) {
+                // Clear shared preferences to remove stored username
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear(); // Clears all saved data in "myData"
+                editor.apply();
+
+                // Redirect to Login Activity
+                Intent intent = new Intent(MainActivity.this, Login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear activity stack
+                startActivity(intent);
+                finish(); // Close MainActivity
+            }
+
 
             drawerLayout.close();
             return true;
         });
+
+
 
         // Button actions for Add Income and Expense
         btnAdd.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, AddIncome.class)));
@@ -147,6 +181,13 @@ public class MainActivity extends AppCompatActivity {
 
         YAxis yAxis = lineChart.getAxisLeft();
     }
+
+
+
+
+
+
+
 
     // Setup the Month Spinner for selecting the month
     // Setup the Month Spinner for selecting the month
@@ -230,11 +271,13 @@ public class MainActivity extends AppCompatActivity {
         incomeDataSet.setColor(Color.GREEN);
         incomeDataSet.setDrawCircles(false);
         incomeDataSet.setDrawValues(false);
+        incomeDataSet.setLineWidth(3f);
 
         LineDataSet expenseDataSet = new LineDataSet(expenseEntries, "Cumulative Expense");
         expenseDataSet.setColor(Color.RED);
         expenseDataSet.setDrawCircles(false);
         expenseDataSet.setDrawValues(false);
+        expenseDataSet.setLineWidth(3f);
 
         lineChart.setData(new LineData(incomeDataSet, expenseDataSet));
         lineChart.invalidate();
@@ -330,4 +373,7 @@ public class MainActivity extends AppCompatActivity {
 
         return totalExpence;
     }
+
+
+
 }

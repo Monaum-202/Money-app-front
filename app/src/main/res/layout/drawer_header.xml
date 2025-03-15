@@ -14,13 +14,15 @@
         app:cardCornerRadius="40dp"
         app:cardElevation="0dp"
         android:backgroundTint="#D1D1D1">
-        
+
         <ImageView
+            android:id="@+id/h_profile"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/profile_image"/>
     </androidx.cardview.widget.CardView>
     <TextView
+        android:id="@+id/h_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -32,11 +34,12 @@
 
 
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="monaum.202@gmail.com"
-        android:textColor="#D0CECE"
-        android:textStyle="normal"
-        android:textSize="13sp" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/h_email"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="monaum.202@gmail.com"-->
+    <!--        android:textColor="#D0CECE"-->
+    <!--        android:textStyle="normal"-->
+    <!--        android:textSize="13sp" />-->
 </LinearLayout>
